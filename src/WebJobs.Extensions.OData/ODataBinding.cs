@@ -5,7 +5,6 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Protocols;
 
@@ -45,14 +44,12 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
             {
                 RequestServices = _context.Services
             };
-
-            var odataRequest = new DefaultHttpRequest(http)
-            {
-                Method = request.Method,
-                Host = request.Host,
-                Path = request.Path,
-                QueryString = request.QueryString
-            };
+            
+            var odataRequest = http.Request;
+                odataRequest.Method = request.Method;
+                odataRequest.Host = request.Host;
+                odataRequest.Path = request.Path;
+                odataRequest.QueryString = request.QueryString;
 
             return BindAsync(odataRequest, context.ValueContext);
         }
