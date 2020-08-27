@@ -17,20 +17,41 @@ namespace Company.Function
         {
             if (!await _context.Products.AnyAsync().ConfigureAwait(false))
             {
+                _context.Departments.AddRange(
+                    new Department
+                    {
+                        Id = 1,
+                        Name = "Fruits"
+                    },
+                    new Department
+                    {
+                        Id = 2,
+                        Name = "Vegetables"
+                    }
+                );
                 _context.Products.AddRange(
                     new Product
                     {
                         Sku = 1,
+                        DepartmentId = 1,
                         Name = "Apple"
                     },
                     new Product
                     {
                         Sku = 2,
-                        Name = "Lettuce"
+                        DepartmentId = 1,
+                        Name = "Orange"
                     },
                     new Product
                     {
                         Sku = 3,
+                        DepartmentId = 2,
+                        Name = "Lettuce"
+                    },
+                    new Product
+                    {
+                        Sku = 4,
+                        DepartmentId = 2,
                         Name = "Potato"
                     });
 

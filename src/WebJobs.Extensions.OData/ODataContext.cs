@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Builder;
@@ -9,13 +10,33 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.OData.Edm;
 using Microsoft.OData.UriParser;
 
 namespace Microsoft.Azure.WebJobs.Extensions.OData
 {
-    internal class ODataContext
+    internal class ODataContext : IDisposable
     {
-        public ODataContext()
+        private readonly Lazy<IEdmModel> _model;
+
+        ~ODataContext() => Dispose(false);
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Services.Dispose();
+            }
+        }
+
+        public ODataContext(Func<IEnumerable<ConfigureODataConventionModelBuilder>> conventions)
         {
             var services = new ServiceCollection();
 
@@ -33,8 +54,8 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
             
             Services = services.BuildServiceProvider();
 
-            RouteBuilder = new RouteBuilder(new ApplicationBuilder(Services));
-            RouteBuilder
+            var routeBuilder = new RouteBuilder(new ApplicationBuilder(Services));
+            routeBuilder
                 .Count()
                 .Expand()
                 .Filter()
@@ -42,11 +63,23 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
                 .OrderBy()
                 .Select()
                 .SkipToken();
-            RouteBuilder.EnableDependencyInjection();
+            routeBuilder.EnableDependencyInjection();
+
+            _model = new Lazy<IEdmModel>(() =>
+            {
+                var builder = new ODataConventionModelBuilder(Services);
+
+                foreach(var convention in conventions())
+                {
+                    convention.Configure(builder);
+                }
+
+                return builder.GetEdmModel();
+            });
         }
 
-        public IServiceProvider Services { get; private set; }
+        public ServiceProvider Services { get; private set; }
 
-        public RouteBuilder RouteBuilder { get; private set; }
+        public IEdmModel Model => _model.Value;
     }
 }

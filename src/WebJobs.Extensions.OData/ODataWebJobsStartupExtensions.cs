@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.Azure.WebJobs.Extensions.OData;
 using Microsoft.Azure.WebJobs.Host.Bindings;
@@ -12,8 +13,12 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
         public static IWebJobsBuilder AddOData(this IWebJobsBuilder builder)
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
-            builder.Services.AddSingleton(new ODataContext());
+
+            builder.Services.AddSingleton(serviceProvider =>
+                new ODataContext(() => serviceProvider.GetServices<ConfigureODataConventionModelBuilder>()));
+
             builder.Services.AddSingleton<IBindingProvider, ODataBindingProvider>();
+
             return builder;
         }
     }

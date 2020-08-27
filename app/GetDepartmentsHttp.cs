@@ -12,21 +12,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.Function
 {
-    public class GetProductsHttp
+    public class GetDepartmentsHttp
     {
         private readonly AppContext _context;
 
-        public GetProductsHttp(AppContext context)
+        public GetDepartmentsHttp(AppContext context)
             => _context = context ?? throw new ArgumentNullException(nameof(context));
 
         [EnableQuery(MaxTop = 100, AllowedQueryOptions = AllowedQueryOptions.All)]
-        [FunctionName(nameof(GetProductsHttp))]
+        [FunctionName(nameof(GetDepartmentsHttp))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "products")] HttpRequest req,
-            ODataQueryOptions<Product> odata,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "departments")] HttpRequest req,
+            ODataQueryOptions<Department> odata,
             ILogger log)
         {
-            var results = await odata.ApplyTo(_context.Products).Cast<dynamic>().ToListAsync().ConfigureAwait(false);
+            var results = await odata.ApplyTo(_context.Departments).Cast<dynamic>().ToListAsync().ConfigureAwait(false);
             return new OkObjectResult(results);
         }
     }

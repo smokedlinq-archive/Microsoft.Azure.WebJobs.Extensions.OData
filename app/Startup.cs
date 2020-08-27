@@ -13,6 +13,11 @@ namespace Company.Function
         {
             _ = builder ?? throw new ArgumentNullException(nameof(builder));
             builder.Services.AddDbContext<AppContext>(options => options.UseInMemoryDatabase(nameof(AppContext)));
+            builder.Services.AddOData(builder =>
+            {
+                builder.EntitySet<Department>("Departments");
+                builder.EntitySet<Product>("Products");
+            });
         }
     }
 }

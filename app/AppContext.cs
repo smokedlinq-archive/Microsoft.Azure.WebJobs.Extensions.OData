@@ -10,8 +10,20 @@ namespace Company.Function
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-            => modelBuilder.Entity<Product>().HasKey(x => x.Sku);
+        {
+            modelBuilder.Entity<Department>(entity => 
+            {
+                entity.HasAlternateKey(x => x.Name);
+            });
+
+            modelBuilder.Entity<Product>(entity => 
+            {
+                entity.HasIndex(x => x.DepartmentId);
+                entity.HasOne(x => x.Department).WithMany(x => x.Products);
+            });
+        }
     }
 }
