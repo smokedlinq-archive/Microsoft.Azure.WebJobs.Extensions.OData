@@ -1,34 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OData.Edm;
 using Microsoft.OData.UriParser;
+using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Azure.WebJobs.Extensions.OData
 {
-    internal class ODataContext : IDisposable
+    internal sealed class ODataContext : IDisposable
     {
         private readonly Lazy<IEdmModel> _model;
 
         ~ODataContext() => Dispose(false);
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -51,7 +46,7 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
             services.AddTransient<CountQueryValidator>();
             services.AddTransient<SelectExpandQueryValidator>();
             services.AddTransient<SkipTokenQueryValidator>();
-            
+
             Services = services.BuildServiceProvider();
 
             var routeBuilder = new RouteBuilder(new ApplicationBuilder(Services));
@@ -69,7 +64,7 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
             {
                 var builder = new ODataConventionModelBuilder(Services);
 
-                foreach(var convention in conventions())
+                foreach (var convention in conventions())
                 {
                     convention.Configure(builder);
                 }

@@ -1,6 +1,6 @@
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 [assembly: FunctionsStartup(typeof(Company.Function.Startup))]

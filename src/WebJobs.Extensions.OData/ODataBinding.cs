@@ -1,12 +1,11 @@
-using System;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Protocols;
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Microsoft.Azure.WebJobs.Extensions.OData
 {
@@ -32,9 +31,9 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
             var request = value as HttpRequest ?? throw new InvalidOperationException($"{nameof(value)} must be an {nameof(HttpRequest)}");
             var queryContext = new ODataQueryContext(_context.Model, _type, new AspNet.OData.Routing.ODataPath());
             var query = _optionsBuilder(request, queryContext);
-            
+
             _attribute.ValidateQuery(request, query);
-            
+
             var provider = new ODataBindingValueProvider(query);
             return Task.FromResult<IValueProvider>(provider);
         }
@@ -43,16 +42,22 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             var request = context.BindingData["$request"] as HttpRequest;
+
+            if (request is null)
+            {
+                throw new NotSupportedException("The OData binding can only be used with the HttpTrigger binding; add a parameter with the HttpTrigger binding attribute.");
+            }
+
             var http = new DefaultHttpContext
             {
                 RequestServices = _context.Services
             };
-            
+
             var odataRequest = http.Request;
-                odataRequest.Method = request.Method;
-                odataRequest.Host = request.Host;
-                odataRequest.Path = request.Path;
-                odataRequest.QueryString = request.QueryString;
+            odataRequest.Method = request.Method;
+            odataRequest.Host = request.Host;
+            odataRequest.Path = request.Path;
+            odataRequest.QueryString = request.QueryString;
 
             return BindAsync(odataRequest, context.ValueContext);
         }
@@ -60,9 +65,9 @@ namespace Microsoft.Azure.WebJobs.Extensions.OData
         public ParameterDescriptor ToParameterDescriptor()
         {
             return new ParameterDescriptor
-                {
-                    Name = "odata"
-                };
+            {
+                Name = "odata"
+            };
         }
 
         private static Func<HttpRequest, ODataQueryContext, ODataQueryOptions> BuildODataQueryOptionsFactory(Type type)

@@ -14,12 +14,12 @@ namespace Company.Function
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Department>(entity => 
+            modelBuilder.Entity<Department>(entity =>
             {
                 entity.HasAlternateKey(x => x.Name);
             });
 
-            modelBuilder.Entity<Product>(entity => 
+            modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasIndex(x => x.DepartmentId);
                 entity.HasOne(x => x.Department).WithMany(x => x.Products);

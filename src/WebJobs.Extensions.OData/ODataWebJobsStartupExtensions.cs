@@ -1,10 +1,6 @@
-﻿using System;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.Azure.WebJobs.Extensions.OData;
-using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Azure.WebJobs.Hosting;
+﻿using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Microsoft.Azure.WebJobs.Extensions.OData
 {

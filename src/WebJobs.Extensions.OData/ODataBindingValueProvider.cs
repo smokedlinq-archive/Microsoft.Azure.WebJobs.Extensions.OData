@@ -1,6 +1,6 @@
+using Microsoft.Azure.WebJobs.Host.Bindings;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs.Host.Bindings;
 
 namespace Microsoft.Azure.WebJobs.Extensions.OData
 {

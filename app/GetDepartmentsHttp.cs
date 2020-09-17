@@ -1,14 +1,14 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Company.Function
 {
